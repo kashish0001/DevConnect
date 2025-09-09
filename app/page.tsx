@@ -46,7 +46,7 @@ function AppContent() {
         <>
           <Sidebar activeSection={activeSection} onSectionChange={setActiveSection} />
           <div className="ml-64">
-            <Header />
+            <Header activeTab={activeSection} setActiveTab={setActiveSection} />
             <main className="min-h-screen">{renderSection()}</main>
           </div>
         </>

@@ -69,14 +69,27 @@ export function PostsProvider({ children }: { children: React.ReactNode }) {
     loadPosts()
   }, [])
 
+  useEffect(() => {
+  if (!loading) {
+    localStorage.setItem("devconnect_posts", JSON.stringify(posts))
+  }
+}, [posts, loading])
+
   const loadPosts = () => {
     try {
       const savedPosts = localStorage.getItem("devconnect_posts")
       if (savedPosts) {
-        const parsedPosts = JSON.parse(savedPosts)
-        setPosts(
-          parsedPosts.sort((a: Post, b: Post) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()),
-        )
+        const parsedPosts: Post[] = JSON.parse(savedPosts)
+        if (Array.isArray(parsedPosts)) {
+          setPosts(
+            parsedPosts.sort(
+              (a: Post, b: Post) =>
+                new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+            ),
+          )
+        } else {
+          setPosts([])
+        }
       } else {
         // Create some demo posts
         const demoPosts: Post[] = [
@@ -178,6 +191,7 @@ const { data, loading, error } = useAsyncData(fetchUserData);`,
       }
     } catch (error) {
       console.error("Error loading posts:", error)
+      setPosts([])
     } finally {
       setLoading(false)
     }
@@ -208,7 +222,7 @@ const { data, loading, error } = useAsyncData(fetchUserData);`,
 
     const updatedPosts = [newPost, ...posts]
     setPosts(updatedPosts)
-    localStorage.setItem("devconnect_posts", JSON.stringify(updatedPosts))
+    //localStorage.setItem("devconnect_posts", JSON.stringify(updatedPosts))
   }
 
   const likePost = async (postId: string) => {
